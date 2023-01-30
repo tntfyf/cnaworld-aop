@@ -1,7 +1,7 @@
-package com.cnaworld.framework.infrastructure.annotation;
+package cn.cnaworld.framework.infrastructure.annotation;
 
-import com.cnaworld.framework.infrastructure.statics.enums.OperationType;
-import com.cnaworld.framework.infrastructure.statics.enums.UserType;
+import cn.cnaworld.framework.infrastructure.statics.enums.OperationType;
+import cn.cnaworld.framework.infrastructure.statics.enums.UserType;
 
 import java.lang.annotation.*;
 

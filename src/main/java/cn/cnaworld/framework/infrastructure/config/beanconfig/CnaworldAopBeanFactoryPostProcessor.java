@@ -1,11 +1,11 @@
-package com.cnaworld.framework.infrastructure.config.beanconfig;
+package cn.cnaworld.framework.infrastructure.config.beanconfig;
 
-import com.cnaworld.framework.infrastructure.aspect.AdapterServiceAdvisor;
-import com.cnaworld.framework.infrastructure.aspect.AdapterServiceMonitorInterceptor;
-import com.cnaworld.framework.infrastructure.processor.CnaworldAopProcessor;
-import com.cnaworld.framework.infrastructure.processor.CnaworldAopProcessorContext;
-import com.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProcessor;
-import com.cnaworld.framework.infrastructure.properties.CnaworldProperties;
+import cn.cnaworld.framework.infrastructure.aspect.AdapterServiceAdvisor;
+import cn.cnaworld.framework.infrastructure.aspect.AdapterServiceMonitorInterceptor;
+import cn.cnaworld.framework.infrastructure.processor.CnaworldAopProcessor;
+import cn.cnaworld.framework.infrastructure.processor.CnaworldAopProcessorContext;
+import cn.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProcessor;
+import cn.cnaworld.framework.infrastructure.properties.CnaworldProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -65,7 +65,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 					continue;
 		        }
 
-				String processorClassName="com.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProcessor";
+				String processorClassName="cn.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProcessor";
 				//切面实现类
 				AdapterServiceMonitorInterceptor adapterServiceMonitorInterceptor=new AdapterServiceMonitorInterceptor();
 				//aop上下文

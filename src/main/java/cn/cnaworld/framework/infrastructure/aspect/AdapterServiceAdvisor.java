@@ -1,4 +1,4 @@
-package com.cnaworld.framework.infrastructure.aspect;
+package cn.cnaworld.framework.infrastructure.aspect;
 
 import lombok.Getter;
 import lombok.Setter;

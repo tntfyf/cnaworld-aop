@@ -1,4 +1,4 @@
-package com.cnaworld.framework.infrastructure.config.beanconfig;
+package cn.cnaworld.framework.infrastructure.config.beanconfig;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;

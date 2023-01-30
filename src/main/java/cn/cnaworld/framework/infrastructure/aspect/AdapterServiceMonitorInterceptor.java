@@ -1,6 +1,6 @@
-package com.cnaworld.framework.infrastructure.aspect;
+package cn.cnaworld.framework.infrastructure.aspect;
 
-import com.cnaworld.framework.infrastructure.processor.CnaworldAopProcessorContext;
+import cn.cnaworld.framework.infrastructure.processor.CnaworldAopProcessorContext;
 import lombok.Data;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;

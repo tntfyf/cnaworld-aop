@@ -1,4 +1,4 @@
-package com.cnaworld.framework.infrastructure.processor;
+package cn.cnaworld.framework.infrastructure.processor;
 
 import org.aopalliance.intercept.MethodInvocation;
 /**

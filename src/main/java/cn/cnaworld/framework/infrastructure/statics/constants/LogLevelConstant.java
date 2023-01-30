@@ -1,4 +1,4 @@
-package com.cnaworld.framework.infrastructure.statics.constants;
+package cn.cnaworld.framework.infrastructure.statics.constants;
 
 /**
  * 日志等级

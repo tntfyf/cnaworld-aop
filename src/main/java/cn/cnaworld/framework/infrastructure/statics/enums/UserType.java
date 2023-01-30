@@ -1,4 +1,4 @@
-package com.cnaworld.framework.infrastructure.statics.enums;
+package cn.cnaworld.framework.infrastructure.statics.enums;
 
 /**
  * 操作人类别

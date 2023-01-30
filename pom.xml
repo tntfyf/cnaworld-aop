@@ -8,7 +8,7 @@
 		<version>2.7.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.cnaworld.framework</groupId>
+	<groupId>cn.cnaworld.framework</groupId>
 	<artifactId>aop</artifactId>
 	<version>1.0.0</version>
 	<name>aop</name>

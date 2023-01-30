@@ -1,4 +1,4 @@
-package com.cnaworld.framework.infrastructure.statics.enums;
+package cn.cnaworld.framework.infrastructure.statics.enums;
 
 /**
  * 业务操作类型

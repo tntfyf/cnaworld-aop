@@ -1,4 +1,4 @@
-package com.cnaworld.framework.infrastructure.properties;
+package cn.cnaworld.framework.infrastructure.properties;
 
 import lombok.Getter;
 import lombok.Setter;

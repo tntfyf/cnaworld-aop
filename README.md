@@ -16,14 +16,14 @@
        #切面列表
        properties:
          #配置切面表达式语法可以切包，方法等 根据业务开启环绕处理器和异常处理器
-         - execution: "execution(* com.cnaworld.framework..*.*Controller.*(..))"
+         - execution: "execution(* cn.cnaworld.framework..*.*Controller.*(..))"
            #前置处理器开关配置，默认为true 开启
            preProcessor: false
            #后置处理器开关配置，默认为true 开启
            postProcessor: false
          #配置注解方式支持配置注解切面 根据业务开启环绕处理器和异常处理器
-         - execution: "@annotation(com.cnaworld.framework.infrastructure.annotation.CnaAopLog)"
-           processorClass: com.cnaworld.framework.infrastructure.component.operatelog.CnoocAopOperateLogProcessor #自定义本地数据库实现
+         - execution: "@annotation(cn.cnaworld.framework.infrastructure.annotation.CnaAopLog)"
+           processorClass: cn.cnaworld.framework.infrastructure.component.operatelog.CnoocAopOperateLogProcessor #自定义本地数据库实现
            #前置处理器开关配置，默认为true 开启
            preProcessor: false
            #后置处理器开关配置，默认为true 开启
