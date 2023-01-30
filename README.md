@@ -51,18 +51,18 @@
        /**
         *前置处理器
         */
-   	@Override
-   	public void prePostProcessor(MethodInvocation invocation,long stime) {
+   	   @Override
+   	   public void prePostProcessor(MethodInvocation invocation,long stime) {
    		// TODO  自定义业务实现 例如可以将日志存入数据库
-   	}
+   	   }
    
        /**
         *后置处理器
         */
-   	@Override
-   	public Object postProcessor(MethodInvocation invocation, Object returnObject,long stime,long etime) {
+   	   @Override
+   	   public Object postProcessor(MethodInvocation invocation, Object returnObject,long stime,long etime) {
    		// TODO  自定义业务实现 例如可以将日志存入数据库
-   	}
+   	   }
    
        /**
         *异常处理器
@@ -77,7 +77,7 @@
         */
        @Override
        public Object aroundProcessor(MethodInvocation invocation , Object returnObject, long stime, long etime) {
-          // TODO  自定义业务实现 例如可以将日志存入数据库
+           // TODO  自定义业务实现 例如可以将日志存入数据库
        }
    	
    }
