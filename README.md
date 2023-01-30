@@ -11,7 +11,7 @@
    cnaworld:
      #aop配置
      aop:
-     	#总开关
+       #总开关
        enable: true 
        #切面列表
        properties:
