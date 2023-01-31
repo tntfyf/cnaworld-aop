@@ -12,31 +12,36 @@
      #aop配置
      aop:
        #总开关
-       enable: true 
+       enable: true
        #切面列表
        properties:
          #配置切面表达式语法可以切包，方法等 根据业务开启环绕处理器和异常处理器
          - execution: "execution(* cn.cnaworld.framework..*.*Controller.*(..))"
+           #默认logback实现 可不配置
+           processor-class: cn.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProcessor
+           #默认logback实现日志等级默认为debug级别
+           log-level: debug
            #前置处理器开关配置，默认为true 开启
-           preProcessor: false
+           pre-processor: true
            #后置处理器开关配置，默认为true 开启
-           postProcessor: false
-         #配置注解方式支持配置注解切面 根据业务开启环绕处理器和异常处理器
-         - execution: "@annotation(cn.cnaworld.framework.infrastructure.annotation.CnaAopLog)"
-           processorClass: cn.cnaworld.framework.infrastructure.component.operatelog.CnoocAopOperateLogProcessor #自定义本地数据库实现
-           #前置处理器开关配置，默认为true 开启
-           preProcessor: false
-           #后置处理器开关配置，默认为true 开启
-           postProcessor: false
-           #环绕处理器开关配置，默认为true 开启
-           aroundProcessor: false
+           post-processor: true
            #异常处理器开关配置，默认为true 开启
-           errorProcessor: false
+           error-processor: true
+           #环绕处理器开关配置，默认为true 开启
+           around-processor: true
+           #配置注解方式支持配置注解切面 根据业务开启环绕处理器和异常处理器
+         - execution: "@annotation(cn.cnaworld.framework.infrastructure.annotation.CnaAopLog)"
+           #自定义本地数据库实现
+           processor-class: cn.cnaworld.framework.infrastructure.component.operatelog.CnoocAopOperateLogProcessor
+           #前置处理器开关关闭
+           pre-processor: false
+           #后置处理器开关关闭
+           post-processor: false
    ```
 
-4.  实现 CbdfAopProcessor 接口
+4. 实现 CbdfAopProcessor 接口
 
-   ```java
+   ```
    import org.aopalliance.intercept.MethodInvocation;
    import org.springframework.context.annotation.Configuration;
    
@@ -82,6 +87,19 @@
    	
    }
    ```
-   
-   
 
+5. 启动类配置包扫描
+
+   ```java
+   @SpringBootApplication
+   @ComponentScan({"cn.cnaworld.cnaworldaoptest","cn.cnaworld.framework"})
+   public class CnaworldAopTestApplication {
+   
+       public static void main(String[] args) {
+           SpringApplication.run(CnaworldAopTestApplication.class, args);
+       }
+   }
+   ```
+
+
+​	
