@@ -1,4 +1,4 @@
-package cn.cnaworld.framework.infrastructure.config.beanconfig;
+package cn.cnaworld.framework.infrastructure.config;
 
 import cn.cnaworld.framework.infrastructure.aspect.AdapterServiceAdvisor;
 import cn.cnaworld.framework.infrastructure.aspect.AdapterServiceMonitorInterceptor;
@@ -6,6 +6,7 @@ import cn.cnaworld.framework.infrastructure.processor.CnaworldAopProcessor;
 import cn.cnaworld.framework.infrastructure.processor.CnaworldAopProcessorContext;
 import cn.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProcessor;
 import cn.cnaworld.framework.infrastructure.properties.CnaworldProperties;
+import cn.cnaworld.framework.infrastructure.statics.constants.LogLevelConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +21,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
+import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -65,19 +67,14 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 					continue;
 		        }
 
-				String processorClassName="cn.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProcessor";
 				//切面实现类
 				AdapterServiceMonitorInterceptor adapterServiceMonitorInterceptor=new AdapterServiceMonitorInterceptor();
 				//aop上下文
 				CnaworldAopProcessorContext cnaworldAopProcessorContext =new CnaworldAopProcessorContext();
 				//实例化实现类
 				Class<?> cbdfAopProcessorClass;
-				if(StringUtils.isNotBlank(aopEntity.getProcessorClass())) {
-					processorClassName= aopEntity.getProcessorClass();
-				}
-
 				try {
-					cbdfAopProcessorClass = Class.forName(processorClassName);
+					cbdfAopProcessorClass = Class.forName(aopEntity.getProcessorClass());
 				} catch (ClassNotFoundException e) {
 					log.debug("cnaworld aop processorClass 解析失败");
 					continue;
@@ -116,6 +113,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 				beanDefinition.getPropertyValues().add("adviceBeanName",adviceBeanName);
 				beanDefinition.getPropertyValues().add("advice",adapterServiceMonitorInterceptor);
 				beanDefinition.getPropertyValues().add("order",Ordered.LOWEST_PRECEDENCE);
+				log.info("register {} success",aopEntity.getExecution());
 				defaultListableBeanFactory.registerBeanDefinition(adviceBeanName, beanDefinition);
 		    }
 		}
@@ -147,42 +145,47 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 							aopEntity = new CnaworldProperties.CnaworldAopProperties.AopEntity();
 						}
 
-						if (propertyName.contains(".postProcessor")) {
+						if (propertyName.contains(".postProcessor") || propertyName.contains(".post-processor")) {
 							Object value = propertySource.getProperty(propertyName);
-							if (value != null) {
-								aopEntity.setPostProcessor((boolean) value);
-							}
+							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop post-processor cannot be empty");
+							aopEntity.setPostProcessor((boolean) value);
 						}
-						if (propertyName.contains(".preProcessor")) {
+						if (propertyName.contains(".preProcessor") || propertyName.contains(".pre-processor")) {
 							Object value = propertySource.getProperty(propertyName);
-							if (value != null) {
-								aopEntity.setPreProcessor((boolean) value);
-							}
+							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop pre-processor cannot be empty");
+							aopEntity.setPreProcessor((boolean) value);
 						}
-						if (propertyName.contains(".aroundProcessor")) {
+						if (propertyName.contains(".aroundProcessor") || propertyName.contains(".around-processor")) {
 							Object value = propertySource.getProperty(propertyName);
-							if (value != null) {
-								aopEntity.setAroundProcessor((boolean) value);
-							}
+							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop around-processor cannot be empty");
+							aopEntity.setAroundProcessor((boolean) value);
 						}
-						if (propertyName.contains(".errorProcessor")) {
+						if (propertyName.contains(".errorProcessor") || propertyName.contains(".error-processor")) {
 							Object value = propertySource.getProperty(propertyName);
-							if (value != null) {
-								aopEntity.setErrorProcessor((boolean) value);
-							}
+							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop error-processor cannot be empty");
+							aopEntity.setErrorProcessor((boolean) value);
 						}
-
 						if (propertyName.contains(".execution")) {
 							Object value = propertySource.getProperty(propertyName);
+							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop execution cannot be empty");
 							aopEntity.setExecution((String) value);
 						}
-						if (propertyName.contains(".processorClass")) {
+						if (propertyName.contains(".processorClass") || propertyName.contains(".processor-class")) {
 							Object value = propertySource.getProperty(propertyName);
+							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop processor-class cannot be empty");
 							aopEntity.setProcessorClass((String) value);
 						}
-						if (propertyName.contains(".logLevel")) {
+						if (propertyName.contains(".logLevel") || propertyName.contains(".log-level")) {
 							Object value = propertySource.getProperty(propertyName);
-							aopEntity.setLogLevel((String) value);
+							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop log-level cannot be empty");
+							String logLevel = (String) value;
+							boolean logLevelBoolean=LogLevelConstant.DEBUG.equalsIgnoreCase(logLevel)
+									|| LogLevelConstant.INFO.equalsIgnoreCase(logLevel)
+									|| LogLevelConstant.TRACE.equalsIgnoreCase(logLevel)
+									|| LogLevelConstant.ERROR.equalsIgnoreCase(logLevel)
+									|| LogLevelConstant.WARN.equalsIgnoreCase(logLevel);
+							Assert.isTrue(logLevelBoolean,"cnaworld.aop log-level is misconfigured");
+							aopEntity.setLogLevel(logLevel);
 						}
 						aopPropertiesMap.put(index, aopEntity);
 					}

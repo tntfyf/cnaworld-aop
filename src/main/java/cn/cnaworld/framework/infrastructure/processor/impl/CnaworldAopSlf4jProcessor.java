@@ -33,13 +33,7 @@ public class CnaworldAopSlf4jProcessor implements CnaworldAopProcessor {
 	 */
 	@Override
 	public void prePostProcessor(MethodInvocation invocation,long stime) {
-		if(LogLevelConstant.DEBUG.equalsIgnoreCase(logLevel)){
-			log.debug("前置处理器|方法名：{},入参：{}",getMethodName(invocation),getArgumentString(invocation));
-		}else if(LogLevelConstant.INFO.equalsIgnoreCase(logLevel)){
-			log.info("前置处理器|方法名：{},入参：{}",getMethodName(invocation),getArgumentString(invocation));
-		}else {
-			log.error("cnooc-aop 默认实现仅支持debug或info日志等级 当前配置为："+logLevel);
-		}
+		printlnLog(logLevel,"前置处理器|方法名：{},入参：{}",getMethodName(invocation),getArgumentString(invocation));
 	}
 
 	/**
@@ -55,13 +49,7 @@ public class CnaworldAopSlf4jProcessor implements CnaworldAopProcessor {
 	 */
 	@Override
 	public Object postProcessor(MethodInvocation invocation, Object returnObject,long stime,long etime) {
-		if(LogLevelConstant.DEBUG.equalsIgnoreCase(logLevel)){
-			log.debug("后置处理器|方法名：{},反参：{}",getMethodName(invocation),JSON.toJSONString(returnObject));
-		}else if(LogLevelConstant.INFO.equalsIgnoreCase(logLevel)){
-			log.info("后置处理器|方法名：{},反参：{}",getMethodName(invocation),JSON.toJSONString(returnObject));
-		}else {
-			log.error("cnooc-aop 默认实现仅支持debug或info日志等级 当前配置为："+logLevel);
-		}
+		printlnLog(logLevel,"后置处理器|方法名：{},反参：{}",getMethodName(invocation),JSON.toJSONString(returnObject));
 		return returnObject;
 	}
 
@@ -77,7 +65,7 @@ public class CnaworldAopSlf4jProcessor implements CnaworldAopProcessor {
 	 */
 	@Override
 	public void errorProcessor(MethodInvocation invocation, Exception e,long stime,long etime) {
-		log.error("异常处理器|方法名：{},入参：{},异常：{}",getMethodName(invocation),getArgumentString(invocation),e.getStackTrace());
+		printlnLog(logLevel,"异常处理器|方法名：{},入参：{},异常：",getMethodName(invocation),getArgumentString(invocation),e);
 	}
 
 	/**
@@ -93,28 +81,20 @@ public class CnaworldAopSlf4jProcessor implements CnaworldAopProcessor {
 	 */
 	@Override
 	public Object aroundProcessor(MethodInvocation invocation, Object returnObject,long stime,long etime) {
-
-		if(LogLevelConstant.DEBUG.equalsIgnoreCase(logLevel)){
-			log.debug("环绕处理器|方法名：{},执行时间：{}毫秒,入参：{},返参：{}"
-					,getMethodName(invocation),etime-stime
-					,getArgumentString(invocation),JSON.toJSONString(returnObject));
-		}else if(LogLevelConstant.INFO.equalsIgnoreCase(logLevel)){
-			log.info("环绕处理器|方法名：{},执行时间：{}毫秒,入参：{},返参：{}"
-					,getMethodName(invocation),etime-stime
-					,getArgumentString(invocation),JSON.toJSONString(returnObject));
-		}else {
-			log.error("cnooc-aop 默认实现仅支持debug或info日志等级 当前配置为："+logLevel);
-		}
+		printlnLog(logLevel,"环绕处理器|方法名：{},执行时间：{}毫秒,入参：{},返参：{}"
+				,getMethodName(invocation),etime-stime
+				,getArgumentString(invocation),JSON.toJSONString(returnObject));
 		return returnObject;
 	}
 
 	/**
 	 * 生成全限定方法名称
+	 *
+	 * @param invocation 调用信息
+	 * @return String 全限定方法名称
 	 * @author Lucifer
 	 * @date 2023/1/30
 	 * @since 1.0
-	 * @param invocation 调用信息
-	 * @return String 全限定方法名称
 	 */
 	protected String getMethodName(MethodInvocation invocation) {
 		return invocation.getMethod().getDeclaringClass().getName()
@@ -139,7 +119,31 @@ public class CnaworldAopSlf4jProcessor implements CnaworldAopProcessor {
 				argumentString=Arrays.toString(argumentObject);
 			}
 		}
+		System.out.println();
 		return argumentString;
+	}
+
+	/**
+	 * 根据日志等级打印日志
+	 * @author Lucifer
+	 * @date 2023/2/1
+	 * @since 1.0.1
+	 * @param logLevel 日志等级
+	 * @param message 日志内容
+	 * @param arguments 参数
+	 */
+	private void printlnLog(String logLevel, String message, Object... arguments){
+		if (LogLevelConstant.ERROR.equalsIgnoreCase(logLevel)){
+			log.error(message,arguments);
+		}else if (LogLevelConstant.WARN.equalsIgnoreCase(logLevel)) {
+			log.warn(message,arguments);
+		}else if (LogLevelConstant.INFO.equalsIgnoreCase(logLevel)) {
+			log.info(message,arguments);
+		}else if (LogLevelConstant.DEBUG.equalsIgnoreCase(logLevel)) {
+			log.debug(message,arguments);
+		}else if (LogLevelConstant.TRACE.equalsIgnoreCase(logLevel)) {
+			log.trace(message,arguments);
+		}
 	}
 
 }

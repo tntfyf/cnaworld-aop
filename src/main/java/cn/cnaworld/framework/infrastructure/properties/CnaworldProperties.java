@@ -81,7 +81,7 @@ public class CnaworldProperties {
             /**
              * 实现类
              */
-            private String processorClass;
+            private String processorClass="cn.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProcessor";
 
             /**
              * 默认实现日志打印级别
