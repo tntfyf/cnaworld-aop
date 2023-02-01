@@ -6,7 +6,7 @@ package cn.cnaworld.framework.infrastructure.statics.constants;
  * @date 2023/1/30
  * @since 1.0
  */
-public class LogLevelConstant {
+public class AopConstant {
 
     /**
      * trace级别
@@ -32,5 +32,10 @@ public class LogLevelConstant {
      * error级别
      */
     public static final String ERROR = "error";
+
+    /**
+     * error级别
+     */
+    public static final String DEFAULT_EXECUTION = "@annotation(cn.cnaworld.framework.infrastructure.annotation.CnaAopLog)";
 
 }

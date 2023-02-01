@@ -1,7 +1,7 @@
 package cn.cnaworld.framework.infrastructure.processor.impl;
 
 import cn.cnaworld.framework.infrastructure.processor.CnaworldAopProcessor;
-import cn.cnaworld.framework.infrastructure.statics.constants.LogLevelConstant;
+import cn.cnaworld.framework.infrastructure.statics.constants.AopConstant;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInvocation;
@@ -17,7 +17,7 @@ import java.util.Arrays;
 @Slf4j
 public class CnaworldAopSlf4jProcessor implements CnaworldAopProcessor {
 
-	private String logLevel = LogLevelConstant.DEBUG;
+	private String logLevel = AopConstant.DEBUG;
 
 	public void setLogLevel(String logLevel) {
 		this.logLevel = logLevel;
@@ -49,7 +49,7 @@ public class CnaworldAopSlf4jProcessor implements CnaworldAopProcessor {
 	 */
 	@Override
 	public Object postProcessor(MethodInvocation invocation, Object returnObject,long stime,long etime) {
-		printlnLog(logLevel,"后置处理器|方法名：{},反参：{}",getMethodName(invocation),JSON.toJSONString(returnObject));
+		printlnLog(logLevel,"后置处理器|方法名：{},入参：{},反参：{}",getMethodName(invocation),getArgumentString(invocation),JSON.toJSONString(returnObject));
 		return returnObject;
 	}
 
@@ -133,15 +133,15 @@ public class CnaworldAopSlf4jProcessor implements CnaworldAopProcessor {
 	 * @param arguments 参数
 	 */
 	private void printlnLog(String logLevel, String message, Object... arguments){
-		if (LogLevelConstant.ERROR.equalsIgnoreCase(logLevel)){
+		if (AopConstant.ERROR.equalsIgnoreCase(logLevel)){
 			log.error(message,arguments);
-		}else if (LogLevelConstant.WARN.equalsIgnoreCase(logLevel)) {
+		}else if (AopConstant.WARN.equalsIgnoreCase(logLevel)) {
 			log.warn(message,arguments);
-		}else if (LogLevelConstant.INFO.equalsIgnoreCase(logLevel)) {
+		}else if (AopConstant.INFO.equalsIgnoreCase(logLevel)) {
 			log.info(message,arguments);
-		}else if (LogLevelConstant.DEBUG.equalsIgnoreCase(logLevel)) {
+		}else if (AopConstant.DEBUG.equalsIgnoreCase(logLevel)) {
 			log.debug(message,arguments);
-		}else if (LogLevelConstant.TRACE.equalsIgnoreCase(logLevel)) {
+		}else if (AopConstant.TRACE.equalsIgnoreCase(logLevel)) {
 			log.trace(message,arguments);
 		}
 	}
