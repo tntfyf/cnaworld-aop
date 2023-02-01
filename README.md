@@ -24,7 +24,16 @@
    application.yml 新增配置
 
    ```yaml
-   #使用cnaworld
+   #使用cnaworld.aop生效最少配置，可对方法使用@CnaAopLog注解观察现象
+   cnaworld:
+     #aop配置
+     aop:
+       #总开关
+       enable: true
+   ```
+
+   ```yaml
+   #使用cnaworld.aop生效完整配置
    cnaworld:
      #aop配置
      aop:
