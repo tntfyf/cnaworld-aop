@@ -24,7 +24,7 @@
    application.yml 新增配置
 
    ```yaml
-   #使用cnaworld生效最少配置
+   #使用cnaworld.aop生效最少配置，可对方法使用@CnaAopLog注解观察现象
    cnaworld:
      #aop配置
      aop:
@@ -33,7 +33,7 @@
    ```
 
    ```yaml
-   #使用cnaworld生效完整
+   #使用cnaworld.aop生效完整配置
    cnaworld:
      #aop配置
      aop:
