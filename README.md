@@ -57,7 +57,18 @@
    
    ```
 
-6. 自定义逻辑需实现 CnaworldAopProcessor接口,并配置到配置项processor-class 中
+6. 效果演示
+
+   ```xml
+   2023-02-01 18:31:46.393  INFO 13536 --- [nio-8080-exec-3] c.c.f.i.p.i.CnaworldAopSlf4jProcessor    : 前置处理器|方法名：cn.cnaworld.cnaworldaoptest.api.TestApi.test,入参：["text"]
+   业务输出:text
+   
+   2023-02-01 18:31:46.418  INFO 13536 --- [nio-8080-exec-3] c.c.f.i.p.i.CnaworldAopSlf4jProcessor    : 后置处理器|方法名：cn.cnaworld.cnaworldaoptest.api.TestApi.test,入参：["text"],反参："return : text"
+   
+   2023-02-01 18:31:46.418  INFO 13536 --- [nio-8080-exec-3] c.c.f.i.p.i.CnaworldAopSlf4jProcessor    : 环绕处理器|方法名：cn.cnaworld.cnaworldaoptest.api.TestApi.test,执行时间：81毫秒,入参：["text"],返参："return : text"
+   ```
+
+7. 自定义逻辑需实现 CnaworldAopProcessor接口,并配置到配置项processor-class 中
 
    ```
    import org.aopalliance.intercept.MethodInvocation;
@@ -106,7 +117,7 @@
    }
    ```
 
-7. 若不生效可启动类配置包扫描 cn.cnaworld.framework
+8. 若不生效可启动类配置包扫描 cn.cnaworld.framework
 
    ```java
    @SpringBootApplication
