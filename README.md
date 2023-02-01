@@ -24,7 +24,16 @@
    application.yml 新增配置
 
    ```yaml
-   #使用cnaworld
+   #使用cnaworld生效最少配置
+   cnaworld:
+     #aop配置
+     aop:
+       #总开关
+       enable: true
+   ```
+
+   ```yaml
+   #使用cnaworld生效完整
    cnaworld:
      #aop配置
      aop:
