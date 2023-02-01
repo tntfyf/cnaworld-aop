@@ -1,10 +1,27 @@
-# 1.0.0版本
+# 1.0.2版本
 
-1. 支持配置的形式实现前置、后置、异常、环绕处理器
+作用：
+1. 支持yml配置的形式实现前置、后置、异常、环绕处理器，将业务与配置搭建解耦，降低spring aop 学习成本，快速实现功能。
 
-2. 提供默认Slf4j的aopLog实现，可使用@CnaAopLog 注解实现帮助实现aopLog,也可自定义注解
+2. 提供基于Slf4j的Log实现cn.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProcessor，根据日志等级log-level 打印切点方法入参，返参，响应时间，异常信息。
 
-3. 客户端配置
+3. 内置注解@CnaAopLog 可直接配置到方法上实现AOP，采用默认实现。若在配置文件中有相同execution配置项，则以配置文件为准，配置项为：@annotation(cn.cnaworld.framework.infrastructure.annotation.CnaAopLog)
+
+4. 默认实现暂不支持MultipartFile类型入参
+
+5. 客户端配置
+
+   pom.xml 引入依赖
+
+   ```
+   <dependency>
+       <groupId>cn.cnaworld.framework</groupId>
+       <artifactId>aop</artifactId>
+       <version>1.0.2</version>
+   </dependency>
+   ```
+
+   application.yml 新增配置
 
    ```yaml
    #使用cnaworld
@@ -29,7 +46,7 @@
            error-processor: true
            #环绕处理器开关配置，默认为true 开启
            around-processor: true
-           #配置注解方式支持配置注解切面 根据业务开启环绕处理器和异常处理器
+           #配置注解方式支持配置注解切面，可使用自定义注解 根据业务开启环绕处理器和异常处理器
          - execution: "@annotation(cn.cnaworld.framework.infrastructure.annotation.CnaAopLog)"
            #自定义本地数据库实现
            processor-class: cn.cnaworld.framework.infrastructure.component.operatelog.CnoocAopOperateLogProcessor
@@ -37,9 +54,10 @@
            pre-processor: false
            #后置处理器开关关闭
            post-processor: false
+   
    ```
 
-4. 实现 CbdfAopProcessor 接口
+6. 自定义逻辑需实现 CnaworldAopProcessor接口,并配置到配置项processor-class 中
 
    ```
    import org.aopalliance.intercept.MethodInvocation;
@@ -51,7 +69,7 @@
    import lombok.extern.slf4j.Slf4j;
    
    @Configuration
-   public class CnaworldAopOperateLogProcessor extends CnaworldAopSlf4jProcessor{
+   public class CnaworldAopOperateLogProcessor implements CnaworldAopProcessor{
    
         /**
         *前置处理器
@@ -88,7 +106,7 @@
    }
    ```
 
-5. 启动类配置包扫描
+7. 若不生效可启动类配置包扫描 cn.cnaworld.framework
 
    ```java
    @SpringBootApplication
@@ -100,6 +118,3 @@
        }
    }
    ```
-
-
-​	

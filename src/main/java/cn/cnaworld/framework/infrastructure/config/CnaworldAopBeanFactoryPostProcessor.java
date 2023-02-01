@@ -6,7 +6,7 @@ import cn.cnaworld.framework.infrastructure.processor.CnaworldAopProcessor;
 import cn.cnaworld.framework.infrastructure.processor.CnaworldAopProcessorContext;
 import cn.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProcessor;
 import cn.cnaworld.framework.infrastructure.properties.CnaworldProperties;
-import cn.cnaworld.framework.infrastructure.statics.constants.LogLevelConstant;
+import cn.cnaworld.framework.infrastructure.statics.constants.AopConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -57,7 +57,6 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 
 		Map<String, CnaworldProperties.CnaworldAopProperties.AopEntity> aopPropertiesMap = new HashMap<>();
 		getAopProperties(propertyValues, aopPropertiesMap);
-
 		if(ObjectUtils.isNotEmpty(aopPropertiesMap)) {
 		    for (Map.Entry<String ,  CnaworldProperties.CnaworldAopProperties.AopEntity> entry : aopPropertiesMap.entrySet()) {
 		    	String index = entry.getKey();
@@ -130,6 +129,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 	 */
 	private void getAopProperties(MutablePropertySources propertyValues, Map<String,  CnaworldProperties.CnaworldAopProperties.AopEntity> aopPropertiesMap) {
 		//获取环境变量中的配置信息
+		boolean defaultCnaworldAopProcessorFlag=false;
 		for(PropertySource<?> pv: propertyValues) {
 			PropertySource<?> propertySource = propertyValues.get(pv.getName());
 			if (propertySource instanceof MapPropertySource){
@@ -168,6 +168,9 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 						if (propertyName.contains(".execution")) {
 							Object value = propertySource.getProperty(propertyName);
 							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop execution cannot be empty");
+							if (AopConstant.DEFAULT_EXECUTION.equals(value)) {
+								defaultCnaworldAopProcessorFlag=true;
+							}
 							aopEntity.setExecution((String) value);
 						}
 						if (propertyName.contains(".processorClass") || propertyName.contains(".processor-class")) {
@@ -179,11 +182,11 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 							Object value = propertySource.getProperty(propertyName);
 							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop log-level cannot be empty");
 							String logLevel = (String) value;
-							boolean logLevelBoolean=LogLevelConstant.DEBUG.equalsIgnoreCase(logLevel)
-									|| LogLevelConstant.INFO.equalsIgnoreCase(logLevel)
-									|| LogLevelConstant.TRACE.equalsIgnoreCase(logLevel)
-									|| LogLevelConstant.ERROR.equalsIgnoreCase(logLevel)
-									|| LogLevelConstant.WARN.equalsIgnoreCase(logLevel);
+							boolean logLevelBoolean= AopConstant.DEBUG.equalsIgnoreCase(logLevel)
+									|| AopConstant.INFO.equalsIgnoreCase(logLevel)
+									|| AopConstant.TRACE.equalsIgnoreCase(logLevel)
+									|| AopConstant.ERROR.equalsIgnoreCase(logLevel)
+									|| AopConstant.WARN.equalsIgnoreCase(logLevel);
 							Assert.isTrue(logLevelBoolean,"cnaworld.aop log-level is misconfigured");
 							aopEntity.setLogLevel(logLevel);
 						}
@@ -191,6 +194,11 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 					}
 				}
 			}
+		}
+		if (!defaultCnaworldAopProcessorFlag) {
+			CnaworldProperties.CnaworldAopProperties.AopEntity defaultCnaworldAopProcessor=new CnaworldProperties.CnaworldAopProperties.AopEntity();
+			defaultCnaworldAopProcessor.setExecution(AopConstant.DEFAULT_EXECUTION);
+			aopPropertiesMap.put("defaultCnaworldAopProcessor",defaultCnaworldAopProcessor);
 		}
 	}
 
