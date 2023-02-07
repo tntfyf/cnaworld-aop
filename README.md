@@ -1,5 +1,5 @@
 # Spring boot 快速实现 aop ：无需了解 spring aop 技术简单配置下yml开箱即用！
-## 1.0.2版本 
+## 1.0.3版本 
 
 作用：
 1. 支持yml配置的形式实现前置、后置、异常、环绕处理器，将业务与配置搭建解耦，降低spring aop 学习成本，快速实现功能。
@@ -59,7 +59,7 @@
            #配置注解方式支持配置注解切面，可使用自定义注解 根据业务开启环绕处理器和异常处理器
          - execution: "@annotation(cn.cnaworld.framework.infrastructure.annotation.CnaAopLog)"
            #自定义本地数据库实现
-           processor-class: cn.cnaworld.framework.infrastructure.component.operatelog.CnoocAopOperateLogProcessor
+           processor-class: cn.cnaworld.framework.infrastructure.component.operatelog.CnaworldAopOperateLogProcessor
            #前置处理器开关关闭
            pre-processor: false
            #后置处理器开关关闭
