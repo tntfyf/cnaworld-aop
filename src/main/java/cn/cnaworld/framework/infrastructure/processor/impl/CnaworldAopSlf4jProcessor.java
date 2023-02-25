@@ -17,7 +17,7 @@ import java.util.Arrays;
 @Slf4j
 public class CnaworldAopSlf4jProcessor implements CnaworldAopProcessor {
 
-	private String logLevel = AopConstant.DEBUG;
+	private String logLevel = AopConstant.INFO;
 
 	public void setLogLevel(String logLevel) {
 		this.logLevel = logLevel;
@@ -119,7 +119,6 @@ public class CnaworldAopSlf4jProcessor implements CnaworldAopProcessor {
 				argumentString=Arrays.toString(argumentObject);
 			}
 		}
-		System.out.println();
 		return argumentString;
 	}
 

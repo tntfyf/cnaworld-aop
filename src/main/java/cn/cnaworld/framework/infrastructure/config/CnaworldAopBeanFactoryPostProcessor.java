@@ -23,7 +23,9 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 /**
  * 自定义spring工厂后置处理器
@@ -38,7 +40,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 	 */
 	private final ConfigurableEnvironment environment;
 	
-	public CnaworldAopBeanFactoryPostProcessor(ConfigurableEnvironment environment){
+	public CnaworldAopBeanFactoryPostProcessor( final ConfigurableEnvironment environment){
 		this.environment = environment;
 	}
 	/**
@@ -50,7 +52,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 	 */
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		log.info("register CnaworldAopBeanFactoryPostProcessor start");
+		log.info("cna-aop register CnaworldAopBeanFactoryPostProcessor start");
 		//spring的bean工厂注册类实例化
 		DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
 		MutablePropertySources propertyValues =  environment.getPropertySources();
@@ -66,10 +68,6 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 					continue;
 		        }
 
-				//切面实现类
-				AdapterServiceMonitorInterceptor adapterServiceMonitorInterceptor=new AdapterServiceMonitorInterceptor();
-				//aop上下文
-				CnaworldAopProcessorContext cnaworldAopProcessorContext =new CnaworldAopProcessorContext();
 				//实例化实现类
 				Class<?> cbdfAopProcessorClass;
 				try {
@@ -79,6 +77,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 					continue;
 				}
 
+				//aop上下文
 				CnaworldAopProcessor cnaworldAopProcessor;
 
 				try {
@@ -95,15 +94,11 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 					log.debug("cnaworld aop processorClass 解析失败");
 					continue;
 				}
-				//将实现类及开关装入上下文中
-				cnaworldAopProcessorContext.setCnaworldAopProcessor(cnaworldAopProcessor);
-				adapterServiceMonitorInterceptor.setCnaworldAopProcessorContext(cnaworldAopProcessorContext);
-				adapterServiceMonitorInterceptor.setAroundProcessor(aopEntity.isAroundProcessor());
-				adapterServiceMonitorInterceptor.setErrorProcessor(aopEntity.isErrorProcessor());
-				adapterServiceMonitorInterceptor.setPostProcessor(aopEntity.isPostProcessor());
-				adapterServiceMonitorInterceptor.setPreProcessor(aopEntity.isPreProcessor());
 
-				String adviceBeanName="adapterServiceAdvice"+index;
+				//将实现类及开关装入上下文中
+				//切面实现类
+				AdapterServiceMonitorInterceptor adapterServiceMonitorInterceptor=new AdapterServiceMonitorInterceptor(new CnaworldAopProcessorContext(cnaworldAopProcessor),aopEntity.isPreProcessor(),aopEntity.isPostProcessor(),aopEntity.isAroundProcessor(),aopEntity.isErrorProcessor());
+				String adviceBeanName="cna-aop "+index;
 				//注册Bean定义，容器根据定义返回bean
 				BeanDefinitionBuilder beanDefinitionBuilder
 				= BeanDefinitionBuilder.genericBeanDefinition(AdapterServiceAdvisor.class);
@@ -111,13 +106,13 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 				beanDefinition.getPropertyValues().add("expression", aopEntity.getExecution());
 				beanDefinition.getPropertyValues().add("adviceBeanName",adviceBeanName);
 				beanDefinition.getPropertyValues().add("advice",adapterServiceMonitorInterceptor);
-				beanDefinition.getPropertyValues().add("order",Ordered.LOWEST_PRECEDENCE);
-				log.info("register {} success",aopEntity.getExecution());
+				beanDefinition.setRole(2);
+				log.info("cna-aop register {} success",aopEntity.getExecution());
 				defaultListableBeanFactory.registerBeanDefinition(adviceBeanName, beanDefinition);
 		    }
 		}
 
-		log.info("register CnaworldAopBeanFactoryPostProcessor finish");
+		log.info("cna-aop register CnaworldAopBeanFactoryPostProcessor finish");
 	}
 	/**
 	 * 获取配置文件中的属性值
@@ -130,14 +125,23 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 	private void getAopProperties(MutablePropertySources propertyValues, Map<String,  CnaworldProperties.CnaworldAopProperties.AopEntity> aopPropertiesMap) {
 		//获取环境变量中的配置信息
 		boolean defaultCnaworldAopProcessorFlag=false;
+		//1、开关开启用户没配置是false 2、开关关闭 false
+		boolean defaultEnabled=true;
+		List<String> removeIndex = new ArrayList<>();
 		for(PropertySource<?> pv: propertyValues) {
 			PropertySource<?> propertySource = propertyValues.get(pv.getName());
 			if (propertySource instanceof MapPropertySource){
 				String[] propertyNames = ((MapPropertySource) propertySource).getPropertyNames();
-
+				for (String propertyName : propertyNames) {
+					if (propertyName.contains("cnaworld.aop.defaultEnable") || propertyName.contains("cnaworld.aop.default-enable")) {
+						Object value = propertySource.getProperty(propertyName);
+						Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop default-enable cannot be empty");
+						defaultEnabled=(boolean) value;
+					}
+				}
 				for (String propertyName : propertyNames) {
 					if (propertyName.contains("cnaworld.aop.properties")) {
-						String index = propertyName.substring(propertyName.indexOf("["), propertyName.indexOf("]"));
+						String index = propertyName.substring(propertyName.indexOf("[")+1, propertyName.indexOf("]"));
 						CnaworldProperties.CnaworldAopProperties.AopEntity aopEntity;
 						if (aopPropertiesMap.containsKey(index)) {
 							aopEntity = aopPropertiesMap.get(index);
@@ -169,7 +173,11 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 							Object value = propertySource.getProperty(propertyName);
 							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop execution cannot be empty");
 							if (AopConstant.DEFAULT_EXECUTION.equals(value)) {
-								defaultCnaworldAopProcessorFlag=true;
+								if (!defaultEnabled){
+									removeIndex.add(index);
+								}else {
+									defaultCnaworldAopProcessorFlag=true;
+								}
 							}
 							aopEntity.setExecution((String) value);
 						}
@@ -195,11 +203,18 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 				}
 			}
 		}
-		if (!defaultCnaworldAopProcessorFlag) {
-			CnaworldProperties.CnaworldAopProperties.AopEntity defaultCnaworldAopProcessor=new CnaworldProperties.CnaworldAopProperties.AopEntity();
-			defaultCnaworldAopProcessor.setExecution(AopConstant.DEFAULT_EXECUTION);
-			aopPropertiesMap.put("defaultCnaworldAopProcessor",defaultCnaworldAopProcessor);
+
+		if (ObjectUtils.isNotEmpty(removeIndex)){
+			for(String key:removeIndex){
+				aopPropertiesMap.remove(key);
+			}
 		}
+
+		//开关开启且用户没有配置过
+		if (defaultEnabled && !defaultCnaworldAopProcessorFlag) {
+			aopPropertiesMap.put("defaultCnaworldAopProcessor",new CnaworldProperties.CnaworldAopProperties.AopEntity());
+		}
+
 	}
 
 	@Override

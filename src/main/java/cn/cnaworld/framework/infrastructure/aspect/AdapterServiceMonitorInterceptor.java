@@ -1,7 +1,7 @@
 package cn.cnaworld.framework.infrastructure.aspect;
 
 import cn.cnaworld.framework.infrastructure.processor.CnaworldAopProcessorContext;
-import lombok.Data;
+import lombok.*;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
@@ -11,7 +11,11 @@ import org.aopalliance.intercept.MethodInvocation;
  * @date 2023/1/30
  * @since 1.0
  */
-@Data
+@Setter
+@Getter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class AdapterServiceMonitorInterceptor implements MethodInterceptor {
 
 	/**
@@ -25,11 +29,6 @@ public class AdapterServiceMonitorInterceptor implements MethodInterceptor {
 	private boolean preProcessor;
 
 	/**
-	 *异常处理器开关
-	 */
-	private boolean errorProcessor;
-
-	/**
 	 *后置处理器开关
 	 */
 	private boolean postProcessor;
@@ -40,9 +39,9 @@ public class AdapterServiceMonitorInterceptor implements MethodInterceptor {
 	private boolean aroundProcessor;
 
 	/**
-	 * 日志等级
+	 *异常处理器开关
 	 */
-	private String logLevel;
+	private boolean errorProcessor;
 
 	/**
 	 * 代理调用
