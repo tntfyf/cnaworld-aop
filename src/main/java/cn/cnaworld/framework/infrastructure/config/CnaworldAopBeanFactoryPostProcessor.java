@@ -52,7 +52,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 	 */
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		log.info("register CnaworldAopBeanFactoryPostProcessor start");
+		log.info("cna-aop register CnaworldAopBeanFactoryPostProcessor start");
 		//spring的bean工厂注册类实例化
 		DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
 		MutablePropertySources propertyValues =  environment.getPropertySources();
@@ -106,13 +106,13 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 				beanDefinition.getPropertyValues().add("expression", aopEntity.getExecution());
 				beanDefinition.getPropertyValues().add("adviceBeanName",adviceBeanName);
 				beanDefinition.getPropertyValues().add("advice",adapterServiceMonitorInterceptor);
-				beanDefinition.getPropertyValues().add("order",Ordered.HIGHEST_PRECEDENCE);
-				log.info("register {} success",aopEntity.getExecution());
+				beanDefinition.setRole(2);
+				log.info("cna-aop register {} success",aopEntity.getExecution());
 				defaultListableBeanFactory.registerBeanDefinition(adviceBeanName, beanDefinition);
 		    }
 		}
 
-		log.info("register CnaworldAopBeanFactoryPostProcessor finish");
+		log.info("cna-aop register CnaworldAopBeanFactoryPostProcessor finish");
 	}
 	/**
 	 * 获取配置文件中的属性值
