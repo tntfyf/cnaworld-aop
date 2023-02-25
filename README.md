@@ -59,7 +59,7 @@
 
 6. 效果演示
 
-   项目启动时对进行注册
+   项目启动时进行注册
 
    ```lua
    2023-02-25 18:57:16.547  INFO 1940 --- [           main] .i.c.CnaworldAopBeanFactoryPostProcessor : cna-aop register CnaworldAopBeanFactoryPostProcessor start
