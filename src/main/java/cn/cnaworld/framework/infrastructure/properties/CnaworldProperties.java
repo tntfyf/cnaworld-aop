@@ -1,11 +1,10 @@
 package cn.cnaworld.framework.infrastructure.properties;
 
+import cn.cnaworld.framework.infrastructure.statics.constants.AopConstant;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
@@ -15,9 +14,7 @@ import java.util.List;
  * @date 2023/1/30
  * @since 1.0
  */
-@Configuration
 @ConfigurationProperties(prefix="cnaworld")
-@EnableConfigurationProperties(CnaworldProperties.class)
 @Getter
 @Setter
 @ToString
@@ -37,9 +34,9 @@ public class CnaworldProperties {
     public static class CnaworldAopProperties {
 
         /**
-         * 总开关
+         * 默认实现开关
          */
-        private boolean enable;
+        private boolean defaultEnable = true;
 
         /**
          * 属性实体
@@ -76,17 +73,17 @@ public class CnaworldProperties {
             /**
              * 切点表达式
              */
-            private String execution;
+            private String execution=AopConstant.DEFAULT_EXECUTION;
 
             /**
              * 实现类
              */
-            private String processorClass="cn.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProcessor";
+            private String processorClass=AopConstant.DEFAULT_LOGIMPL;
 
             /**
              * 默认实现日志打印级别
              */
-            private String logLevel = "debug";
+            private String logLevel = AopConstant.INFO;
 
         }
 

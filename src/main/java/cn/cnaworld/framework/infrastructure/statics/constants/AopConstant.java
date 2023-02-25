@@ -34,8 +34,14 @@ public class AopConstant {
     public static final String ERROR = "error";
 
     /**
-     * error级别
+     * 默认注解表达式
      */
     public static final String DEFAULT_EXECUTION = "@annotation(cn.cnaworld.framework.infrastructure.annotation.CnaAopLog)";
+
+    /**
+     * 默认log实现
+     */
+    public static final String DEFAULT_LOGIMPL = "cn.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProcessor";
+
 
 }
