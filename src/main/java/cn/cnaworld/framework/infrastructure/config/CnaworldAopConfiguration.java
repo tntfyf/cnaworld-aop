@@ -1,7 +1,5 @@
 package cn.cnaworld.framework.infrastructure.config;
 
-import cn.cnaworld.framework.infrastructure.properties.CnaworldProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -12,11 +10,10 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * @since 1.0
  */
 @Configuration
-@EnableConfigurationProperties(CnaworldProperties.class)
 public class CnaworldAopConfiguration {
 
 	/**
-	 * 启动自定义后置处理器，注入环境变量
+	 * 启动自定义前置处理器，注入环境变量
 	 * @author Lucifer
 	 * @date 2023/1/30
 	 * @since 1.0
