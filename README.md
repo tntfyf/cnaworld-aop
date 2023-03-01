@@ -1,5 +1,5 @@
 # Spring boot 快速实现 aop ：无需了解 spring aop 技术简单配置下yml开箱即用！
-## 1.0.5版本 
+## 1.0.6版本 
 
 作用：
 1. 支持yml配置的形式实现前置、后置、异常、环绕处理器，将业务与配置搭建解耦，降低spring aop 学习成本，快速实现功能。
@@ -12,13 +12,13 @@
 
 5. 客户端配置
 
-   pom.xml 引入依赖 , 依赖引入后可对方法使用@CnaAopLog注解观察控制台打印日志
+   pom.xml 引入依赖后,无需进行配置,可直接对方法使用@CnaAopLog注解观察控制台打印日志
 
    ```xml
    <dependency>
        <groupId>cn.cnaworld.framework</groupId>
        <artifactId>aop</artifactId>
-       <version>1.0.5</version>
+       <version>1.0.6</version>
    </dependency>
    ```
 

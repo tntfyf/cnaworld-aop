@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 /**
- * 自定义spring工厂后置处理器
+ * 自定义spring工厂前置处理器
  * @author Lucifer
  * @date 2023/1/30
  * @since 1.0
@@ -39,7 +39,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 	 * spring 环境变量配置
 	 */
 	private final ConfigurableEnvironment environment;
-	
+
 	public CnaworldAopBeanFactoryPostProcessor( final ConfigurableEnvironment environment){
 		this.environment = environment;
 	}
@@ -64,7 +64,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 		    	String index = entry.getKey();
 				CnaworldProperties.CnaworldAopProperties.AopEntity aopEntity = entry.getValue();
 		        if(StringUtils.isBlank(aopEntity.getExecution())) {
-					log.debug("cnaworld aop execution 解析失败");
+					log.error("cnaworld aop execution can not empty ！");
 					continue;
 		        }
 
@@ -73,7 +73,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 				try {
 					cbdfAopProcessorClass = Class.forName(aopEntity.getProcessorClass());
 				} catch (ClassNotFoundException e) {
-					log.debug("cnaworld aop processorClass 解析失败");
+					log.error("cnaworld aop processorClass 解析失败 ：{}" , aopEntity.getProcessorClass());
 					continue;
 				}
 
@@ -83,7 +83,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 				try {
 					Object obj  =   cbdfAopProcessorClass.newInstance();
 					if (!cbdfAopProcessorClass.isInstance(obj)) {
-						log.debug("cnaworld aop processorClass 解析失败");
+						log.error("cnaworld aop processorClass 解析失败 ：{}" , aopEntity.getProcessorClass());
 						continue;
 					}
 					cnaworldAopProcessor =(CnaworldAopProcessor) obj;
@@ -91,7 +91,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 						((CnaworldAopSlf4jProcessor) cnaworldAopProcessor).setLogLevel(aopEntity.getLogLevel());
 					}
 				} catch (InstantiationException | IllegalAccessException e) {
-					log.debug("cnaworld aop processorClass 解析失败");
+					log.error("cnaworld aop processorClass 解析失败 ：{}" , aopEntity.getProcessorClass());
 					continue;
 				}
 
@@ -123,7 +123,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 	 * @param aopPropertiesMap 过滤后的属性容器
 	 */
 	private void getAopProperties(MutablePropertySources propertyValues, Map<String,  CnaworldProperties.CnaworldAopProperties.AopEntity> aopPropertiesMap) {
-		//获取环境变量中的配置信息
+		//客户端是否覆盖默认配置 true 覆盖，false 不覆盖
 		boolean defaultCnaworldAopProcessorFlag=false;
 		//1、开关开启用户没配置是false 2、开关关闭 false
 		boolean defaultEnabled=true;
@@ -132,6 +132,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 			PropertySource<?> propertySource = propertyValues.get(pv.getName());
 			if (propertySource instanceof MapPropertySource){
 				String[] propertyNames = ((MapPropertySource) propertySource).getPropertyNames();
+				//优先获取客户端开关配置
 				for (String propertyName : propertyNames) {
 					if (propertyName.contains("cnaworld.aop.defaultEnable") || propertyName.contains("cnaworld.aop.default-enable")) {
 						Object value = propertySource.getProperty(propertyName);
@@ -139,68 +140,8 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 						defaultEnabled=(boolean) value;
 					}
 				}
-				for (String propertyName : propertyNames) {
-					if (propertyName.contains("cnaworld.aop.properties")) {
-						String index = propertyName.substring(propertyName.indexOf("[")+1, propertyName.indexOf("]"));
-						CnaworldProperties.CnaworldAopProperties.AopEntity aopEntity;
-						if (aopPropertiesMap.containsKey(index)) {
-							aopEntity = aopPropertiesMap.get(index);
-						} else {
-							aopEntity = new CnaworldProperties.CnaworldAopProperties.AopEntity();
-						}
-
-						if (propertyName.contains(".postProcessor") || propertyName.contains(".post-processor")) {
-							Object value = propertySource.getProperty(propertyName);
-							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop post-processor cannot be empty");
-							aopEntity.setPostProcessor((boolean) value);
-						}
-						if (propertyName.contains(".preProcessor") || propertyName.contains(".pre-processor")) {
-							Object value = propertySource.getProperty(propertyName);
-							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop pre-processor cannot be empty");
-							aopEntity.setPreProcessor((boolean) value);
-						}
-						if (propertyName.contains(".aroundProcessor") || propertyName.contains(".around-processor")) {
-							Object value = propertySource.getProperty(propertyName);
-							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop around-processor cannot be empty");
-							aopEntity.setAroundProcessor((boolean) value);
-						}
-						if (propertyName.contains(".errorProcessor") || propertyName.contains(".error-processor")) {
-							Object value = propertySource.getProperty(propertyName);
-							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop error-processor cannot be empty");
-							aopEntity.setErrorProcessor((boolean) value);
-						}
-						if (propertyName.contains(".execution")) {
-							Object value = propertySource.getProperty(propertyName);
-							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop execution cannot be empty");
-							if (AopConstant.DEFAULT_EXECUTION.equals(value)) {
-								if (!defaultEnabled){
-									removeIndex.add(index);
-								}else {
-									defaultCnaworldAopProcessorFlag=true;
-								}
-							}
-							aopEntity.setExecution((String) value);
-						}
-						if (propertyName.contains(".processorClass") || propertyName.contains(".processor-class")) {
-							Object value = propertySource.getProperty(propertyName);
-							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop processor-class cannot be empty");
-							aopEntity.setProcessorClass((String) value);
-						}
-						if (propertyName.contains(".logLevel") || propertyName.contains(".log-level")) {
-							Object value = propertySource.getProperty(propertyName);
-							Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop log-level cannot be empty");
-							String logLevel = (String) value;
-							boolean logLevelBoolean= AopConstant.DEBUG.equalsIgnoreCase(logLevel)
-									|| AopConstant.INFO.equalsIgnoreCase(logLevel)
-									|| AopConstant.TRACE.equalsIgnoreCase(logLevel)
-									|| AopConstant.ERROR.equalsIgnoreCase(logLevel)
-									|| AopConstant.WARN.equalsIgnoreCase(logLevel);
-							Assert.isTrue(logLevelBoolean,"cnaworld.aop log-level is misconfigured");
-							aopEntity.setLogLevel(logLevel);
-						}
-						aopPropertiesMap.put(index, aopEntity);
-					}
-				}
+				//注入客户端配置
+				defaultCnaworldAopProcessorFlag = getClientAopProperties(aopPropertiesMap, defaultEnabled, removeIndex, propertySource, propertyNames);
 			}
 		}
 
@@ -215,6 +156,87 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 			aopPropertiesMap.put("defaultCnaworldAopProcessor",new CnaworldProperties.CnaworldAopProperties.AopEntity());
 		}
 
+	}
+
+	/**
+	 *  注入客户端其他配置
+	 * @author Lucifer
+	 * @date 2023/3/1
+	 * @since 1.0.6
+	 * @param aopPropertiesMap 即将注入spring的bean属性集合容器
+	 * @param defaultEnabled 1、开关开启用户没配置是false 2、开关关闭 false 3、开启默认配置true
+	 * @param removeIndex defaultEnabled开关关闭，移除所有默认配置,包括客户端自定义
+	 * @param propertySource 配置源
+	 * @param propertyNames  属性名
+	 * @return defaultCnaworldAopProcessorFlag 客户端是否覆盖默认配置 true 覆盖，false 不覆盖
+	 */
+	private static boolean getClientAopProperties(Map<String, CnaworldProperties.CnaworldAopProperties.AopEntity> aopPropertiesMap , boolean defaultEnabled, List<String> removeIndex, PropertySource<?> propertySource, String[] propertyNames) {
+		//客户端是否覆盖默认配置 true 覆盖，false 不覆盖
+		boolean defaultCnaworldAopProcessorFlag=false;
+
+		for (String propertyName : propertyNames) {
+			if (propertyName.contains(AopConstant.PROPERTIES)) {
+				String index = propertyName.substring(propertyName.indexOf("[")+1, propertyName.indexOf("]"));
+				CnaworldProperties.CnaworldAopProperties.AopEntity aopEntity;
+				if (aopPropertiesMap.containsKey(index)) {
+					aopEntity = aopPropertiesMap.get(index);
+				} else {
+					aopEntity = new CnaworldProperties.CnaworldAopProperties.AopEntity();
+				}
+
+				if (propertyName.contains(AopConstant.POST_PROCESSOR) || propertyName.contains(AopConstant.POSTPROCESSOR)) {
+					Object value = propertySource.getProperty(propertyName);
+					Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop post-processor cannot be empty");
+					aopEntity.setPostProcessor((boolean) value);
+				}
+				if (propertyName.contains(AopConstant.PRE_PROCESSOR) || propertyName.contains(AopConstant.PREPROCESSOR)) {
+					Object value = propertySource.getProperty(propertyName);
+					Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop pre-processor cannot be empty");
+					aopEntity.setPreProcessor((boolean) value);
+				}
+				if (propertyName.contains(AopConstant.AROUND_PROCESSOR) || propertyName.contains(AopConstant.AROUNDPROCESSOR)) {
+					Object value = propertySource.getProperty(propertyName);
+					Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop around-processor cannot be empty");
+					aopEntity.setAroundProcessor((boolean) value);
+				}
+				if (propertyName.contains(AopConstant.ERROR_PROCESSOR) || propertyName.contains(AopConstant.ERRORPROCESSOR)) {
+					Object value = propertySource.getProperty(propertyName);
+					Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop error-processor cannot be empty");
+					aopEntity.setErrorProcessor((boolean) value);
+				}
+				if (propertyName.contains(AopConstant.EXECUTION)) {
+					Object value = propertySource.getProperty(propertyName);
+					Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop execution cannot be empty");
+					if (AopConstant.DEFAULT_EXECUTION.equals(value)) {
+						if (!defaultEnabled){
+							removeIndex.add(index);
+						}else {
+							defaultCnaworldAopProcessorFlag =true;
+						}
+					}
+					aopEntity.setExecution((String) value);
+				}
+				if (propertyName.contains(AopConstant.PROCESSOR_CLASS) || propertyName.contains(AopConstant.PROCESSORCLASS)) {
+					Object value = propertySource.getProperty(propertyName);
+					Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop processor-class cannot be empty");
+					aopEntity.setProcessorClass((String) value);
+				}
+				if (propertyName.contains(AopConstant.LOG_LEVEL) || propertyName.contains(AopConstant.LOGLEVEL)) {
+					Object value = propertySource.getProperty(propertyName);
+					Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop log-level cannot be empty");
+					String logLevel = (String) value;
+					boolean logLevelBoolean= AopConstant.DEBUG.equalsIgnoreCase(logLevel)
+							|| AopConstant.INFO.equalsIgnoreCase(logLevel)
+							|| AopConstant.TRACE.equalsIgnoreCase(logLevel)
+							|| AopConstant.ERROR.equalsIgnoreCase(logLevel)
+							|| AopConstant.WARN.equalsIgnoreCase(logLevel);
+					Assert.isTrue(logLevelBoolean,"cnaworld.aop log-level is misconfigured");
+					aopEntity.setLogLevel(logLevel);
+				}
+				aopPropertiesMap.put(index, aopEntity);
+			}
+		}
+		return defaultCnaworldAopProcessorFlag;
 	}
 
 	@Override
