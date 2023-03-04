@@ -18,9 +18,9 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class CnaworldProperties {
+public class CnaworldAopProperties {
 
-    private CnaworldAopProperties aop;
+    private AopProperties aop;
 
     /**
      * aop配置
@@ -31,7 +31,7 @@ public class CnaworldProperties {
     @Getter
     @Setter
     @ToString
-    public static class CnaworldAopProperties {
+    public static class AopProperties {
 
         /**
          * 默认实现开关
