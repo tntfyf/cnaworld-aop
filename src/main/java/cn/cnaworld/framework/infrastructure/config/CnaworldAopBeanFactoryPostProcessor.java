@@ -5,7 +5,7 @@ import cn.cnaworld.framework.infrastructure.aspect.AdapterServiceMonitorIntercep
 import cn.cnaworld.framework.infrastructure.processor.CnaworldAopProcessor;
 import cn.cnaworld.framework.infrastructure.processor.CnaworldAopProcessorContext;
 import cn.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProcessor;
-import cn.cnaworld.framework.infrastructure.properties.CnaworldProperties;
+import cn.cnaworld.framework.infrastructure.properties.CnaworldAopProperties;
 import cn.cnaworld.framework.infrastructure.statics.constants.AopConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -51,18 +51,18 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 	 * @param beanFactory bean工厂
 	 */
 	@Override
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+	public void postProcessBeanFactory(  ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		log.info("cna-aop register CnaworldAopBeanFactoryPostProcessor start");
 		//spring的bean工厂注册类实例化
 		DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
 		MutablePropertySources propertyValues =  environment.getPropertySources();
 
-		Map<String, CnaworldProperties.CnaworldAopProperties.AopEntity> aopPropertiesMap = new HashMap<>();
+		Map<String, CnaworldAopProperties.AopProperties.AopEntity> aopPropertiesMap = new HashMap<>();
 		getAopProperties(propertyValues, aopPropertiesMap);
 		if(ObjectUtils.isNotEmpty(aopPropertiesMap)) {
-		    for (Map.Entry<String ,  CnaworldProperties.CnaworldAopProperties.AopEntity> entry : aopPropertiesMap.entrySet()) {
+		    for (Map.Entry<String ,  CnaworldAopProperties.AopProperties.AopEntity> entry : aopPropertiesMap.entrySet()) {
 		    	String index = entry.getKey();
-				CnaworldProperties.CnaworldAopProperties.AopEntity aopEntity = entry.getValue();
+				CnaworldAopProperties.AopProperties.AopEntity aopEntity = entry.getValue();
 		        if(StringUtils.isBlank(aopEntity.getExecution())) {
 					log.error("cnaworld aop execution can not empty ！");
 					continue;
@@ -122,7 +122,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 	 * @param propertyValues 全量属性信息
 	 * @param aopPropertiesMap 过滤后的属性容器
 	 */
-	private void getAopProperties(MutablePropertySources propertyValues, Map<String,  CnaworldProperties.CnaworldAopProperties.AopEntity> aopPropertiesMap) {
+	private void getAopProperties(MutablePropertySources propertyValues, Map<String,  CnaworldAopProperties.AopProperties.AopEntity> aopPropertiesMap) {
 		//客户端是否覆盖默认配置 true 覆盖，false 不覆盖
 		boolean defaultCnaworldAopProcessorFlag=false;
 		//1、开关开启用户没配置是false 2、开关关闭 false
@@ -153,7 +153,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 
 		//开关开启且用户没有配置过
 		if (defaultEnabled && !defaultCnaworldAopProcessorFlag) {
-			aopPropertiesMap.put("defaultCnaworldAopProcessor",new CnaworldProperties.CnaworldAopProperties.AopEntity());
+			aopPropertiesMap.put("defaultCnaworldAopProcessor",new CnaworldAopProperties.AopProperties.AopEntity());
 		}
 
 	}
@@ -170,18 +170,18 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 	 * @param propertyNames  属性名
 	 * @return defaultCnaworldAopProcessorFlag 客户端是否覆盖默认配置 true 覆盖，false 不覆盖
 	 */
-	private static boolean getClientAopProperties(Map<String, CnaworldProperties.CnaworldAopProperties.AopEntity> aopPropertiesMap , boolean defaultEnabled, List<String> removeIndex, PropertySource<?> propertySource, String[] propertyNames) {
+	private static boolean getClientAopProperties(Map<String, CnaworldAopProperties.AopProperties.AopEntity> aopPropertiesMap , boolean defaultEnabled, List<String> removeIndex, PropertySource<?> propertySource, String[] propertyNames) {
 		//客户端是否覆盖默认配置 true 覆盖，false 不覆盖
 		boolean defaultCnaworldAopProcessorFlag=false;
 
 		for (String propertyName : propertyNames) {
 			if (propertyName.contains(AopConstant.PROPERTIES)) {
 				String index = propertyName.substring(propertyName.indexOf("[")+1, propertyName.indexOf("]"));
-				CnaworldProperties.CnaworldAopProperties.AopEntity aopEntity;
+				CnaworldAopProperties.AopProperties.AopEntity aopEntity;
 				if (aopPropertiesMap.containsKey(index)) {
 					aopEntity = aopPropertiesMap.get(index);
 				} else {
-					aopEntity = new CnaworldProperties.CnaworldAopProperties.AopEntity();
+					aopEntity = new CnaworldAopProperties.AopProperties.AopEntity();
 				}
 
 				if (propertyName.contains(AopConstant.POST_PROCESSOR) || propertyName.contains(AopConstant.POSTPROCESSOR)) {

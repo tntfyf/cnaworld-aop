@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>cn.cnaworld.framework</groupId>
 	<artifactId>aop</artifactId>
-	<version>1.0.6</version>
+	<version>1.0.7</version>
 	<name>cnaworld-aop</name>
-	<description>configuration-aop</description>
+	<description>cnaworld-aop</description>
 	<url>https://github.com/tntfyf/cnaworld-aop</url>
 	<packaging>jar</packaging>
 	<properties>
