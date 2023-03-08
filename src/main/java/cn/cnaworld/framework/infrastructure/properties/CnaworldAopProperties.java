@@ -14,10 +14,11 @@ import java.util.List;
  * @date 2023/1/30
  * @since 1.0
  */
-@ConfigurationProperties(prefix="cnaworld")
+
 @Getter
 @Setter
 @ToString
+@ConfigurationProperties(prefix="cnaworld")
 public class CnaworldAopProperties {
 
     private AopProperties aop;
