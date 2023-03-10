@@ -1,5 +1,7 @@
 package cn.cnaworld.framework.infrastructure.config;
 
+import cn.cnaworld.framework.infrastructure.properties.CnaworldAopProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -10,6 +12,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * @since 1.0
  */
 @Configuration
+@EnableConfigurationProperties({CnaworldAopProperties.class})
 public class CnaworldAopConfiguration {
 
 	/**
