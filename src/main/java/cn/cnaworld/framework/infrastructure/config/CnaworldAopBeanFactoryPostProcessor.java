@@ -23,7 +23,6 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.util.Assert;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,7 +81,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 				CnaworldAopProcessor cnaworldAopProcessor;
 
 				try {
-					Object obj  =  cbdfAopProcessorClass.getDeclaredConstructor().newInstance();
+					Object obj  =  cbdfAopProcessorClass.newInstance();
 					if (!cbdfAopProcessorClass.isInstance(obj)) {
 						log.error("cnaworld aop processorClass 解析失败 ：{}" , aopProperties.getProcessorClass());
 						continue;
@@ -91,7 +90,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 					if (cnaworldAopProcessor instanceof CnaworldAopSlf4jProcessor){
 						((CnaworldAopSlf4jProcessor) cnaworldAopProcessor).setLogLevel(aopProperties.getLogLevel());
 					}
-				} catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+				} catch (InstantiationException | IllegalAccessException e) {
 					log.error("cnaworld aop processorClass 解析失败 ：{}", aopProperties.getProcessorClass());
 					continue;
 				}
