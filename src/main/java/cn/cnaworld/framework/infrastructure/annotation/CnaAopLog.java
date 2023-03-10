@@ -19,17 +19,17 @@ public @interface CnaAopLog {
     /**
      * 模块中文名称
      */
-    String moduleName();
+    String moduleName() default "";
 
     /**
      * 操作名称
      */
-    String operationName();
+    String operationName() default "";
 
     /**
      * 操作类型
      */
-    OperationType operationType();
+    OperationType operationType() default OperationType.OTHER;
 
     /**
      * 操作描述
