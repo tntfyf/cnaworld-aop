@@ -18,13 +18,21 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-@ConfigurationProperties(prefix="cnaworld")
+@ConfigurationProperties(prefix="cnaworld.aop")
 public class CnaworldAopProperties {
 
-    private AopProperties aop;
+    /**
+     * 默认实现开关
+     */
+    private boolean defaultEnable = true;
 
     /**
-     * aop配置
+     * 属性实体
+     */
+    private List<AopProperties> properties;
+
+    /**
+     * 属性实体
      * @author Lucifer
      * @date 2023/1/30
      * @since 1.0
@@ -35,58 +43,35 @@ public class CnaworldAopProperties {
     public static class AopProperties {
 
         /**
-         * 默认实现开关
+         * 后置处理器开关
          */
-        private boolean defaultEnable = true;
+        private boolean postProcessor=true;
+        /**
+         * 前置处理器开关
+         */
+        private boolean preProcessor=true;
+        /**
+         * 环绕处理器开关
+         */
+        private boolean aroundProcessor=true;
+        /**
+         * 异常处理器开关
+         */
+        private boolean errorProcessor=true;
+        /**
+         * 切点表达式
+         */
+        private String execution=AopConstant.DEFAULT_EXECUTION;
 
         /**
-         * 属性实体
+         * 实现类
          */
-        private List<AopEntity> properties;
+        private String processorClass=AopConstant.DEFAULT_LOGIMPL;
 
         /**
-         * 属性实体
-         * @author Lucifer
-         * @date 2023/1/30
-         * @since 1.0
+         * 默认实现日志打印级别
          */
-        @Getter
-        @Setter
-        @ToString
-        public static class AopEntity {
-
-            /**
-             * 后置处理器开关
-             */
-            private boolean postProcessor=true;
-            /**
-             * 前置处理器开关
-             */
-            private boolean preProcessor=true;
-            /**
-             * 环绕处理器开关
-             */
-            private boolean aroundProcessor=true;
-            /**
-             * 异常处理器开关
-             */
-            private boolean errorProcessor=true;
-            /**
-             * 切点表达式
-             */
-            private String execution=AopConstant.DEFAULT_EXECUTION;
-
-            /**
-             * 实现类
-             */
-            private String processorClass=AopConstant.DEFAULT_LOGIMPL;
-
-            /**
-             * 默认实现日志打印级别
-             */
-            private String logLevel = AopConstant.INFO;
-
-        }
+        private String logLevel = AopConstant.INFO;
 
     }
 

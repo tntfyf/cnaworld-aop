@@ -23,6 +23,7 @@ import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
 import org.springframework.util.Assert;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,13 +58,13 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 		DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
 		MutablePropertySources propertyValues =  environment.getPropertySources();
 
-		Map<String, CnaworldAopProperties.AopProperties.AopEntity> aopPropertiesMap = new HashMap<>();
+		Map<String, CnaworldAopProperties.AopProperties> aopPropertiesMap = new HashMap<>();
 		getAopProperties(propertyValues, aopPropertiesMap);
 		if(ObjectUtils.isNotEmpty(aopPropertiesMap)) {
-		    for (Map.Entry<String ,  CnaworldAopProperties.AopProperties.AopEntity> entry : aopPropertiesMap.entrySet()) {
+		    for (Map.Entry<String ,  CnaworldAopProperties.AopProperties> entry : aopPropertiesMap.entrySet()) {
 		    	String index = entry.getKey();
-				CnaworldAopProperties.AopProperties.AopEntity aopEntity = entry.getValue();
-		        if(StringUtils.isBlank(aopEntity.getExecution())) {
+				CnaworldAopProperties.AopProperties aopProperties = entry.getValue();
+		        if(StringUtils.isBlank(aopProperties.getExecution())) {
 					log.error("cnaworld aop execution can not empty ！");
 					continue;
 		        }
@@ -71,9 +72,9 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 				//实例化实现类
 				Class<?> cbdfAopProcessorClass;
 				try {
-					cbdfAopProcessorClass = Class.forName(aopEntity.getProcessorClass());
+					cbdfAopProcessorClass = Class.forName(aopProperties.getProcessorClass());
 				} catch (ClassNotFoundException e) {
-					log.error("cnaworld aop processorClass 解析失败 ：{}" , aopEntity.getProcessorClass());
+					log.error("cnaworld aop processorClass 解析失败 ：{}" , aopProperties.getProcessorClass());
 					continue;
 				}
 
@@ -81,33 +82,33 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 				CnaworldAopProcessor cnaworldAopProcessor;
 
 				try {
-					Object obj  =   cbdfAopProcessorClass.newInstance();
+					Object obj  =  cbdfAopProcessorClass.getDeclaredConstructor().newInstance();
 					if (!cbdfAopProcessorClass.isInstance(obj)) {
-						log.error("cnaworld aop processorClass 解析失败 ：{}" , aopEntity.getProcessorClass());
+						log.error("cnaworld aop processorClass 解析失败 ：{}" , aopProperties.getProcessorClass());
 						continue;
 					}
 					cnaworldAopProcessor =(CnaworldAopProcessor) obj;
 					if (cnaworldAopProcessor instanceof CnaworldAopSlf4jProcessor){
-						((CnaworldAopSlf4jProcessor) cnaworldAopProcessor).setLogLevel(aopEntity.getLogLevel());
+						((CnaworldAopSlf4jProcessor) cnaworldAopProcessor).setLogLevel(aopProperties.getLogLevel());
 					}
-				} catch (InstantiationException | IllegalAccessException e) {
-					log.error("cnaworld aop processorClass 解析失败 ：{}" , aopEntity.getProcessorClass());
+				} catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+					log.error("cnaworld aop processorClass 解析失败 ：{}", aopProperties.getProcessorClass());
 					continue;
 				}
 
 				//将实现类及开关装入上下文中
 				//切面实现类
-				AdapterServiceMonitorInterceptor adapterServiceMonitorInterceptor=new AdapterServiceMonitorInterceptor(new CnaworldAopProcessorContext(cnaworldAopProcessor),aopEntity.isPreProcessor(),aopEntity.isPostProcessor(),aopEntity.isAroundProcessor(),aopEntity.isErrorProcessor());
+				AdapterServiceMonitorInterceptor adapterServiceMonitorInterceptor=new AdapterServiceMonitorInterceptor(new CnaworldAopProcessorContext(cnaworldAopProcessor),aopProperties.isPreProcessor(),aopProperties.isPostProcessor(),aopProperties.isAroundProcessor(),aopProperties.isErrorProcessor());
 				String adviceBeanName="cna-aop "+index;
 				//注册Bean定义，容器根据定义返回bean
 				BeanDefinitionBuilder beanDefinitionBuilder
 				= BeanDefinitionBuilder.genericBeanDefinition(AdapterServiceAdvisor.class);
 				BeanDefinition beanDefinition = beanDefinitionBuilder.getRawBeanDefinition();
-				beanDefinition.getPropertyValues().add("expression", aopEntity.getExecution());
+				beanDefinition.getPropertyValues().add("expression", aopProperties.getExecution());
 				beanDefinition.getPropertyValues().add("adviceBeanName",adviceBeanName);
 				beanDefinition.getPropertyValues().add("advice",adapterServiceMonitorInterceptor);
 				beanDefinition.setRole(2);
-				log.info("cnaworld aop register {} success",aopEntity.getExecution());
+				log.info("cnaworld aop register {} success",aopProperties.getExecution());
 				defaultListableBeanFactory.registerBeanDefinition(adviceBeanName, beanDefinition);
 		    }
 		}
@@ -122,7 +123,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 	 * @param propertyValues 全量属性信息
 	 * @param aopPropertiesMap 过滤后的属性容器
 	 */
-	private void getAopProperties(MutablePropertySources propertyValues, Map<String,  CnaworldAopProperties.AopProperties.AopEntity> aopPropertiesMap) {
+	private void getAopProperties(MutablePropertySources propertyValues, Map<String,  CnaworldAopProperties.AopProperties> aopPropertiesMap) {
 		//客户端是否覆盖默认配置 true 覆盖，false 不覆盖
 		boolean defaultCnaworldAopProcessorFlag=false;
 		//1、开关开启用户没配置是false 2、开关关闭 false
@@ -153,7 +154,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 
 		//开关开启且用户没有配置过
 		if (defaultEnabled && !defaultCnaworldAopProcessorFlag) {
-			aopPropertiesMap.put("defaultCnaworldAopProcessor",new CnaworldAopProperties.AopProperties.AopEntity());
+			aopPropertiesMap.put("defaultCnaworldAopProcessor",new CnaworldAopProperties.AopProperties());
 		}
 
 	}
@@ -170,18 +171,18 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 	 * @param propertyNames  属性名
 	 * @return defaultCnaworldAopProcessorFlag 客户端是否覆盖默认配置 true 覆盖，false 不覆盖
 	 */
-	private static boolean getClientAopProperties(Map<String, CnaworldAopProperties.AopProperties.AopEntity> aopPropertiesMap , boolean defaultEnabled, List<String> removeIndex, PropertySource<?> propertySource, String[] propertyNames) {
+	private static boolean getClientAopProperties(Map<String, CnaworldAopProperties.AopProperties> aopPropertiesMap , boolean defaultEnabled, List<String> removeIndex, PropertySource<?> propertySource, String[] propertyNames) {
 		//客户端是否覆盖默认配置 true 覆盖，false 不覆盖
 		boolean defaultCnaworldAopProcessorFlag=false;
 
 		for (String propertyName : propertyNames) {
 			if (propertyName.contains(AopConstant.PROPERTIES)) {
 				String index = propertyName.substring(propertyName.indexOf("[")+1, propertyName.indexOf("]"));
-				CnaworldAopProperties.AopProperties.AopEntity aopEntity;
+				CnaworldAopProperties.AopProperties aopEntity;
 				if (aopPropertiesMap.containsKey(index)) {
 					aopEntity = aopPropertiesMap.get(index);
 				} else {
-					aopEntity = new CnaworldAopProperties.AopProperties.AopEntity();
+					aopEntity = new CnaworldAopProperties.AopProperties();
 				}
 
 				if (propertyName.contains(AopConstant.POST_PROCESSOR) || propertyName.contains(AopConstant.POSTPROCESSOR)) {
