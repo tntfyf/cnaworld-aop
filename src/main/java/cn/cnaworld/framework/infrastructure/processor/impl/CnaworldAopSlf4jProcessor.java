@@ -1,7 +1,8 @@
 package cn.cnaworld.framework.infrastructure.processor.impl;
 
 import cn.cnaworld.framework.infrastructure.processor.CnaworldAopProcessor;
-import cn.cnaworld.framework.infrastructure.statics.constants.AopConstant;
+import cn.cnaworld.framework.infrastructure.statics.enums.LogLevel;
+import cn.cnaworld.framework.infrastructure.utils.CnaLogUtil;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInvocation;
@@ -17,9 +18,9 @@ import java.util.Arrays;
 @Slf4j
 public class CnaworldAopSlf4jProcessor implements CnaworldAopProcessor {
 
-	private String logLevel = AopConstant.INFO;
+	private LogLevel logLevel = LogLevel.INFO;
 
-	public void setLogLevel(String logLevel) {
+	public void setLogLevel(LogLevel logLevel) {
 		this.logLevel = logLevel;
 	}
 
@@ -131,17 +132,26 @@ public class CnaworldAopSlf4jProcessor implements CnaworldAopProcessor {
 	 * @param message 日志内容
 	 * @param arguments 参数
 	 */
-	private void printlnLog(String logLevel, String message, Object... arguments){
-		if (AopConstant.ERROR.equalsIgnoreCase(logLevel)){
-			log.error(message,arguments);
-		}else if (AopConstant.WARN.equalsIgnoreCase(logLevel)) {
-			log.warn(message,arguments);
-		}else if (AopConstant.INFO.equalsIgnoreCase(logLevel)) {
-			log.info(message,arguments);
-		}else if (AopConstant.DEBUG.equalsIgnoreCase(logLevel)) {
-			log.debug(message,arguments);
-		}else if (AopConstant.TRACE.equalsIgnoreCase(logLevel)) {
-			log.trace(message,arguments);
+	private void printlnLog(LogLevel logLevel, String message, Object... arguments){
+		switch (logLevel) {
+			case TRACE:
+				CnaLogUtil.trace(log,message,arguments);
+				break;
+			case DEBUG:
+				CnaLogUtil.debug(log,message,arguments);
+				break;
+			case INFO:
+				CnaLogUtil.info(log,message,arguments);
+				break;
+			case WARN:
+				CnaLogUtil.warn(log,message,arguments);
+				break;
+			case ERROR:
+				CnaLogUtil.error(log,message,arguments);
+				break;
+			default:
+				CnaLogUtil.info(log,message,arguments);
+				break;
 		}
 	}
 

@@ -9,31 +9,6 @@ package cn.cnaworld.framework.infrastructure.statics.constants;
 public class AopConstant {
 
     /**
-     * trace级别
-     */
-    public static final String TRACE = "trace";
-
-    /**
-     * debug级别
-     */
-    public static final String DEBUG = "debug";
-
-    /**
-     * info级别
-     */
-    public static final String INFO = "info";
-
-    /**
-     * warn级别
-     */
-    public static final String WARN = "warn";
-
-    /**
-     * error级别
-     */
-    public static final String ERROR = "error";
-
-    /**
      * 默认注解表达式
      */
     public static final String DEFAULT_EXECUTION = "@annotation(cn.cnaworld.framework.infrastructure.annotation.CnaAopLog)";

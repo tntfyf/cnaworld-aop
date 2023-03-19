@@ -1,6 +1,7 @@
 package cn.cnaworld.framework.infrastructure.properties;
 
 import cn.cnaworld.framework.infrastructure.statics.constants.AopConstant;
+import cn.cnaworld.framework.infrastructure.statics.enums.LogLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -71,7 +72,7 @@ public class CnaworldAopProperties {
         /**
          * 默认实现日志打印级别
          */
-        private String logLevel = AopConstant.INFO;
+        private LogLevel logLevel = LogLevel.INFO;
 
     }
 
