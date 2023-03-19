@@ -99,6 +99,7 @@
  			<groupId>cn.cnaworld.framework</groupId>
  			<artifactId>log</artifactId>
 			<version>${cnaworld.log.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
