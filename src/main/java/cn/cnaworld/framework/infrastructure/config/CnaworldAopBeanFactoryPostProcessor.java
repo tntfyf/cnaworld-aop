@@ -8,7 +8,7 @@ import cn.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProce
 import cn.cnaworld.framework.infrastructure.properties.CnaworldAopProperties;
 import cn.cnaworld.framework.infrastructure.statics.constants.AopConstant;
 import cn.cnaworld.framework.infrastructure.statics.enums.LogLevel;
-import cn.cnaworld.framework.infrastructure.utils.CnaLogUtil;
+import cn.cnaworld.framework.infrastructure.utils.log.CnaLogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;

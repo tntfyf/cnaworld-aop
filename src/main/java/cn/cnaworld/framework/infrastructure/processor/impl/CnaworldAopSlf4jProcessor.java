@@ -2,7 +2,7 @@ package cn.cnaworld.framework.infrastructure.processor.impl;
 
 import cn.cnaworld.framework.infrastructure.processor.CnaworldAopProcessor;
 import cn.cnaworld.framework.infrastructure.statics.enums.LogLevel;
-import cn.cnaworld.framework.infrastructure.utils.CnaLogUtil;
+import cn.cnaworld.framework.infrastructure.utils.log.CnaLogUtil;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInvocation;
