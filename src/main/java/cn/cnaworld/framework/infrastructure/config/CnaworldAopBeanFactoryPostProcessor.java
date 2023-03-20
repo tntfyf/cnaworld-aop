@@ -8,7 +8,7 @@ import cn.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProce
 import cn.cnaworld.framework.infrastructure.properties.CnaworldAopProperties;
 import cn.cnaworld.framework.infrastructure.statics.constants.AopConstant;
 import cn.cnaworld.framework.infrastructure.statics.enums.LogLevel;
-import cn.cnaworld.framework.infrastructure.utils.CnaLogUtil;
+import cn.cnaworld.framework.infrastructure.utils.log.CnaLogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -54,7 +54,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 	 */
 	@Override
 	public void postProcessBeanFactory(  ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		CnaLogUtil.info(log,"cnaworld aop register CnaworldAopBeanFactoryPostProcessor start");
+		CnaLogUtil.info(log,"cnaworld aop register start");
 		//spring的bean工厂注册类实例化
 		DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
 		MutablePropertySources propertyValues =  environment.getPropertySources();
@@ -113,7 +113,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 				defaultListableBeanFactory.registerBeanDefinition(adviceBeanName, beanDefinition);
 		    }
 		}
-		CnaLogUtil.info(log,"cnaworld aop register CnaworldAopBeanFactoryPostProcessor finish");
+		CnaLogUtil.info(log,"cnaworld aop register initialized");
 	}
 	/**
 	 * 获取配置文件中的属性值
