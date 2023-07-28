@@ -23,7 +23,7 @@ public class CnaworldAopConfiguration {
 	 * @param environment 环境变量
 	 */
 	@Bean
-	public static CnaworldAopBeanFactoryPostProcessor cnoocAopLogBeanFactoryPostProcessor(ConfigurableEnvironment environment){
+	public static CnaworldAopBeanFactoryPostProcessor cnaworldAopBeanFactoryPostProcessor(ConfigurableEnvironment environment){
 		return new CnaworldAopBeanFactoryPostProcessor(environment);
 	}
     
