@@ -1,7 +1,9 @@
 package cn.cnaworld.framework.infrastructure.properties;
 
+import cn.cnaworld.framework.infrastructure.processor.CnaworldAopProcessor;
 import cn.cnaworld.framework.infrastructure.statics.constants.AopConstant;
 import cn.cnaworld.framework.infrastructure.statics.enums.LogLevel;
+import cn.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProcessor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -67,7 +69,7 @@ public class CnaworldAopProperties {
         /**
          * 实现类
          */
-        private String processorClass=AopConstant.DEFAULT_LOGIMPL;
+        private Class<? extends CnaworldAopProcessor> aopProcessor = CnaworldAopSlf4jProcessor.class;
 
         /**
          * 默认实现日志打印级别
