@@ -70,30 +70,16 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 					continue;
 		        }
 
-				//实例化实现类
-				Class<?> cbdfAopProcessorClass;
-				try {
-					cbdfAopProcessorClass = Class.forName(aopProperties.getProcessorClass());
-				} catch (ClassNotFoundException e) {
-					CnaLogUtil.error(log,"cnaworld aop processorClass 解析失败 ：{}" , aopProperties.getProcessorClass());
-					continue;
-				}
-
 				//aop上下文
-				CnaworldAopProcessor cnaworldAopProcessor;
-
+				CnaworldAopProcessor cnaworldAopProcessor = null;
 				try {
-					Object obj  =  cbdfAopProcessorClass.newInstance();
-					if (!cbdfAopProcessorClass.isInstance(obj)) {
-						CnaLogUtil.error(log,"cnaworld aop processorClass 解析失败 ：{}" , aopProperties.getProcessorClass());
-						continue;
-					}
-					cnaworldAopProcessor =(CnaworldAopProcessor) obj;
+					Class<? extends CnaworldAopProcessor> aopProcessor = aopProperties.getAopProcessor();
+					cnaworldAopProcessor  =  aopProcessor.newInstance();
 					if (cnaworldAopProcessor instanceof CnaworldAopSlf4jProcessor){
 						((CnaworldAopSlf4jProcessor) cnaworldAopProcessor).setLogLevel(aopProperties.getLogLevel());
 					}
 				} catch (InstantiationException | IllegalAccessException e) {
-					CnaLogUtil.error(log,"cnaworld aop processorClass 解析失败 ：{}", aopProperties.getProcessorClass());
+					CnaLogUtil.error(log,"cnaworld aop processorClass 解析失败 ：{}", aopProperties.getAopProcessor());
 					continue;
 				}
 
@@ -217,10 +203,14 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 					}
 					aopEntity.setExecution((String) value);
 				}
-				if (propertyName.contains(AopConstant.PROCESSOR_CLASS) || propertyName.contains(AopConstant.PROCESSORCLASS)) {
+				if (propertyName.contains(AopConstant.AOP_PROCESSOR) || propertyName.contains(AopConstant.AOPPROCESSOR)) {
 					Object value = propertySource.getProperty(propertyName);
-					Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop processor-class cannot be empty");
-					aopEntity.setProcessorClass((String) value);
+					Assert.isTrue(ObjectUtils.isNotEmpty(value),"cnaworld.aop aop-processor cannot be empty");
+					try {
+						aopEntity.setAopProcessor((Class<? extends CnaworldAopProcessor>) Class.forName((String) value));
+					} catch (ClassNotFoundException e) {
+						throw new RuntimeException("cnaworld.aop-processor init error : "+e.getMessage(),e);
+					}
 				}
 				if (propertyName.contains(AopConstant.LOG_LEVEL) || propertyName.contains(AopConstant.LOGLEVEL)) {
 					Object value = propertySource.getProperty(propertyName);

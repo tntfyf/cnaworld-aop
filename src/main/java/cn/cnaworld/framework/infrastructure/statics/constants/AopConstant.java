@@ -14,11 +14,6 @@ public class AopConstant {
     public static final String DEFAULT_EXECUTION = "@annotation(cn.cnaworld.framework.infrastructure.annotation.CnaAopLog)";
 
     /**
-     * 默认log实现
-     */
-    public static final String DEFAULT_LOGIMPL = "cn.cnaworld.framework.infrastructure.processor.impl.CnaworldAopSlf4jProcessor";
-
-    /**
      * 属性配置名称
      */
     public static final String PROPERTIES = "cnaworld.aop.properties";
@@ -71,12 +66,12 @@ public class AopConstant {
     /**
      * 实现类配置名称
      */
-    public static final String PROCESSOR_CLASS = ".processor-class";
+    public static final String AOP_PROCESSOR = ".aop-processor";
 
     /**
      * 实现类配置名称
      */
-    public static final String PROCESSORCLASS = ".processorClass";
+    public static final String AOPPROCESSOR = ".aopProcessor";
 
     /**
      * 默认日志等级配置名称
