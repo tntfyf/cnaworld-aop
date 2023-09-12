@@ -9,6 +9,7 @@ import cn.cnaworld.framework.infrastructure.properties.CnaworldAopProperties;
 import cn.cnaworld.framework.infrastructure.statics.constants.AopConstant;
 import cn.cnaworld.framework.infrastructure.statics.enums.LogLevel;
 import cn.cnaworld.framework.infrastructure.utils.log.CnaLogUtil;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -53,7 +54,7 @@ public class CnaworldAopBeanFactoryPostProcessor implements BeanFactoryPostProce
 	 * @param beanFactory bean工厂
 	 */
 	@Override
-	public void postProcessBeanFactory(  ConfigurableListableBeanFactory beanFactory) throws BeansException {
+	public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		CnaLogUtil.info(log,"cnaworld aop register start");
 		//spring的bean工厂注册类实例化
 		DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
