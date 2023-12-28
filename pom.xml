@@ -4,13 +4,12 @@
 	<parent>
 		<groupId>cn.cnaworld.framework</groupId>
 		<artifactId>cnaworld-framework</artifactId>
-		<version>1.1.5</version>
+		<version>1.1.7</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>aop</artifactId>
-	<version>1.1.5</version>
 	<name>cnaworld-aop</name>
 	<description>cnaworld-aop</description>
 	<url>https://github.com/tntfyf/cnaworld-aop</url>
@@ -62,7 +61,6 @@
 		<dependency>
     		<groupId>com.alibaba</groupId>
     		<artifactId>fastjson</artifactId>
-    		<version>1.2.83</version>
 			<scope>compile</scope>
 		</dependency>
 
